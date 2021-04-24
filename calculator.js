@@ -6,9 +6,9 @@ class Calculator {
     this._clck; // click
 
     this.init();
-    this.ctrlV();
   }
 
+  // getters, setters
   get aobr() {
     return this._aobr;
   }
@@ -36,6 +36,7 @@ class Calculator {
 
     this.setEvents();
     this.setKeyboardEvents();
+    this.ctrlV();
   }
 
   // set click events
@@ -75,6 +76,8 @@ class Calculator {
         break;
       // operator
       case "%": // percent
+        // TODO
+        break;
       case "/": // division
       case "*": // multiplication
       case "-": // minus
@@ -146,7 +149,7 @@ class Calculator {
 
     // default
     let toEval = this.aobr[0].join("") + this.aobr[1] + this.aobr[2].join("");
-    this.aobr[3] = [this.doEval(toEval)];
+    this.aobr[3] = [eval(toEval)];
     this.stps = toEval + "=";
     this.rslt = this.aobr[3];
   }
@@ -156,14 +159,19 @@ class Calculator {
     let length = this.aobr.length;
     let rslt;
 
+    // no previous number
     if (length == 0) {
       this.aobr[0] = ["0"];
     } else if (length == 3) {
-      rslt = [this.doEval(this.aobr[0].join("") + this.aobr[1] + this.aobr[2].join(""))];
+      // a, operator, b
+      rslt = [
+        eval(this.aobr[0].join("") + this.aobr[1] + this.aobr[2].join("")),
+      ];
       this.handleClickEventC();
       this.aobr.push(rslt);
       this.rslt = rslt;
     } else if (length == 4) {
+      // a, operator, b, result
       rslt = this.aobr[3];
       this.handleClickEventC();
       this.aobr.push(rslt);
@@ -213,13 +221,12 @@ class Calculator {
   // keyboard
   setKeyboardEvents() {
     document.addEventListener("keyup", (e) => {
-
       // play click sound
       this.playClick();
 
       let key = e.key;
       switch (key) {
-        case "c": // copy
+        case "c": // CTRL-C
           if (e.ctrlKey) {
             this.ctrlC();
           }
@@ -236,6 +243,8 @@ class Calculator {
           break;
         // operator
         case "%": // percent
+          // TODO
+          break;
         case "/": // division
         case "*": // multiplication
         case "-": // minus
@@ -252,11 +261,6 @@ class Calculator {
   // handle display
   handleDisplay() {
     this.rslt = this.aobr[this.aobr.length == 1 ? 0 : 2].join("");
-  }
-
-  // do eval
-  doEval(aob) {
-    return eval(aob);
   }
 
   // copy
