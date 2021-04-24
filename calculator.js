@@ -3,8 +3,10 @@ class Calculator {
     this._aobr; // a, operator, b, result
     this._stps; // steps
     this._rslt; // result
+    this._clck; // click
 
     this.init();
+    this.ctrlV();
   }
 
   get aobr() {
@@ -30,6 +32,7 @@ class Calculator {
     this._aobr = [];
     this._stps = document.querySelector("#stps");
     this._rslt = document.querySelector("#rslt");
+    this._clck = new Audio("assets/click.mp3");
 
     this.setEvents();
     this.setKeyboardEvents();
@@ -48,6 +51,9 @@ class Calculator {
 
   // handle click events
   handleClickEvents(e, btn) {
+    // play click sound
+    this.playClick();
+
     let value = btn.value;
     switch (value) {
       // ! DEV
@@ -207,9 +213,17 @@ class Calculator {
   // keyboard
   setKeyboardEvents() {
     document.addEventListener("keyup", (e) => {
+
+      // play click sound
+      this.playClick();
+
       let key = e.key;
       switch (key) {
-        // control
+        case "c": // copy
+          if (e.ctrlKey) {
+            this.ctrlC();
+          }
+          break;
         case "Escape": // ESC
           this.handleClickEventC();
           break;
@@ -243,5 +257,36 @@ class Calculator {
   // do eval
   doEval(aob) {
     return eval(aob);
+  }
+
+  // copy
+  ctrlC() {
+    let input = document.createElement("input");
+    input.value = this.rslt;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    input.remove();
+  }
+
+  // paste
+  ctrlV() {
+    document.addEventListener("paste", (e) => {
+      let paste = e.clipboardData.getData("text");
+      // not a number
+      if (isNaN(parseFloat(paste))) {
+        return;
+      }
+
+      paste.split("").forEach((e) => {
+        this.handleClickEventNumber(e);
+      });
+    });
+  }
+
+  // play click sound
+  playClick() {
+    this._clck.currentTime = 0;
+    this._clck.play();
   }
 }
